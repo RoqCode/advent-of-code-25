@@ -8,11 +8,11 @@ package main
 // return counter
 
 import (
-	"bufio"
 	"fmt"
 	"log"
-	"os"
 	"strconv"
+
+	"advent-of-code-25/internal/input"
 )
 
 var (
@@ -21,20 +21,12 @@ var (
 )
 
 func main() {
-	// Open the file
-	file, err := os.Open("./input.txt")
+	lines, err := input.ReadLines("01/input.txt")
 	if err != nil {
-		log.Fatalf("Failed to open file: %s", err)
+		log.Fatalf("Failed to read input: %s", err)
 	}
-	defer file.Close()
 
-	// Create a new Scanner for the file
-	scanner := bufio.NewScanner(file)
-
-	// Iterate over each line
-	for scanner.Scan() {
-		line := scanner.Text()
-		// Process the line here
+	for _, line := range lines {
 		direction := (Direction)(line[:1])
 
 		val, err := strconv.Atoi(line[1:])
@@ -46,11 +38,6 @@ func main() {
 		if err != nil {
 			fmt.Println(err)
 		}
-	}
-
-	// Check for errors during scanning
-	if err := scanner.Err(); err != nil {
-		log.Fatalf("Error reading file: %s", err)
 	}
 
 	fmt.Printf("Password: %d\n", counter)
@@ -71,33 +58,22 @@ func turnDialVal(d Direction, val int) error {
 
 	switch d {
 	case DirectionR:
-
-		for i := val; i > 0; i-- {
-			dialVal++
-
-			if dialVal == 100 {
-				dialVal = 0
-			}
-
-			if dialVal == 0 {
-				counter++
-			}
+		dialVal += val
+		for dialVal >= 100 {
+			dialVal -= 100
 		}
 	case DirectionL:
-		for i := val; i > 0; i-- {
-			dialVal--
-
-			if dialVal == -1 {
-				dialVal = 99
-			}
-
-			if dialVal == 0 {
-				counter++
-			}
+		dialVal -= val
+		for dialVal < 0 {
+			dialVal += 100
 		}
 	}
 
 	fmt.Printf("Turning Dial by %d in Direction %s, Dial shows %d\n", val, d, dialVal)
+
+	if dialVal == 0 {
+		counter++
+	}
 
 	return nil
 }

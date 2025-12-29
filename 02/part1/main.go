@@ -1,29 +1,21 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
 	"log"
-	"os"
 	"strconv"
 	"strings"
+
+	"advent-of-code-25/internal/input"
 )
 
 func main() {
-	// Open the file
-	file, err := os.Open("./input.txt")
+	lines, err := input.ReadLines("02/input.txt")
 	if err != nil {
-		log.Fatalf("Failed to open file: %s", err)
+		log.Fatalf("Failed to read input: %s", err)
 	}
-	defer file.Close()
 
-	// Create a new Scanner for the file
-	scanner := bufio.NewScanner(file)
-
-	// Iterate over each line
-	for scanner.Scan() {
-		line := scanner.Text()
-		// Process the line here
+	for _, line := range lines {
 
 		IDs := strings.Split(line, ",")
 
@@ -44,11 +36,6 @@ func main() {
 				IDRangeStart++
 			}
 
-		}
-
-		// Check for errors during scanning
-		if err := scanner.Err(); err != nil {
-			log.Fatalf("Error reading file: %s", err)
 		}
 
 		fmt.Println(invalidIDsSum)
